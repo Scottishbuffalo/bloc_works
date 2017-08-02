@@ -9,13 +9,11 @@ module BlocWorks
     def call(env)
       response = self.root(env)
 
-      if response
-        return response
+      if controller.has_response?
+        status, header, response = controller.get_response
+        [status, header, [response.body].flatten]
       else
-        cont_array = self.controller_and_action(env)
-        cont = cont_array.first.new(env)
-        action_call = cont.send(cont_array.last)
-        return [200, {'Content-Type' => 'text/html'}, [action_call]]
+        [200, {'Content-Type' => 'text/html'}, [text]]
       end
     end
   end
